@@ -23,6 +23,7 @@
 #include <QMetaType>
 #include <QDir>
 #include <QApplication>
+#include <QMutexLocker>
 #include "fileloader_p.h"
 #include "qmmpuisettings.h"
 #include "playlistitem.h"
@@ -38,9 +39,6 @@ FileLoader::FileLoader(QObject *parent) : QThread(parent)
     m_parts = TrackInfo::NoParts;
     connect(qApp, SIGNAL(aboutToQuit()), SLOT(finish()));
 }
-
-FileLoader::~FileLoader()
-{}
 
 QList<PlayListTrack *> FileLoader::processFile(const QString &path, QStringList *ignoredPaths)
 {
@@ -234,19 +232,15 @@ void FileLoader::addDirectory(const QString& s, PlayListItem *before)
 void FileLoader::run()
 {
     m_finished = false;
-    m_mutex.lock();
-    if(m_tasks.isEmpty())
-    {
-        m_mutex.unlock();
-        return;
-    }
-    m_mutex.unlock();
 
     while(!m_finished)
     {
-        m_mutex.lock();
+        QMutexLocker locker(&m_mutex);
+        if(m_tasks.isEmpty())
+            return;
+
         LoaderTask i = m_tasks.dequeue();
-        m_mutex.unlock();
+        locker.unlock();
         PlayListItem *before = i.before;
         QString path = i.path;
 
@@ -257,7 +251,6 @@ void FileLoader::run()
             if(info.isDir())
             {
                 addDirectory(path, before);
-
             }
             else if(info.isFile() && PlayListParser::isPlayList(path))
             {
@@ -276,14 +269,6 @@ void FileLoader::run()
         {
             insertPlayList(i.playListFormat, i.playListContent, before);
         }
-
-        m_mutex.lock();
-        if(m_tasks.isEmpty())
-        {
-            m_mutex.unlock();
-            break;
-        }
-        m_mutex.unlock();
     }
 }
 
@@ -297,15 +282,8 @@ void FileLoader::add(const QStringList &paths)
     insert(nullptr, paths);
 }
 
-void FileLoader::addPlayList(const QString &fmt, const QByteArray &data)
+void FileLoader::processQueue()
 {
-    m_mutex.lock();
-    LoaderTask task;
-    task.before = nullptr;
-    task.playListFormat = fmt;
-    task.playListContent = data;
-    m_tasks.append(task);
-    m_mutex.unlock();
     if(!isRunning())
     {
         MetaDataManager::instance()->prepareForAnotherThread();
@@ -317,6 +295,18 @@ void FileLoader::addPlayList(const QString &fmt, const QByteArray &data)
     start(QThread::IdlePriority);
 }
 
+void FileLoader::addPlayList(const QString &fmt, const QByteArray &data)
+{
+    QMutexLocker locker(&m_mutex);
+    LoaderTask task;
+    task.before = nullptr;
+    task.playListFormat = fmt;
+    task.playListContent = data;
+    m_tasks.append(task);
+    locker.unlock();
+    processQueue();
+}
+
 void FileLoader::insert(PlayListItem *before, const QString &path)
 {
     insert(before, QStringList() << path);
@@ -324,7 +314,7 @@ void FileLoader::insert(PlayListItem *before, const QString &path)
 
 void FileLoader::insert(PlayListItem *before, const QStringList &paths)
 {
-    m_mutex.lock();
+    QMutexLocker locker(&m_mutex);
     foreach (QString path, paths)
     {
         LoaderTask task;
@@ -332,16 +322,8 @@ void FileLoader::insert(PlayListItem *before, const QStringList &paths)
         task.path = QDir::fromNativeSeparators(path);
         m_tasks.append(task);
     }
-    m_mutex.unlock();
-
-    if(!isRunning())
-    {
-        MetaDataManager::instance()->prepareForAnotherThread();
-        m_filters = MetaDataManager::instance()->nameFilters();
-        m_parts = m_settings->useMetaData() ? TrackInfo::AllParts : TrackInfo::NoParts;
-        m_readMetaDataForPlayLists = m_settings->readMetaDataForPlayLists();
-    }
-    start(QThread::IdlePriority);
+    locker.unlock();
+    processQueue();
 }
 
 void FileLoader::finish()
