@@ -142,7 +142,7 @@ void PlayListTask::sort(QList<PlayListTrack *> tracks, PlayListModel::SortMode m
     if(isRunning())
         return;
     clear();
-    m_reverted = !m_reverted;
+    m_reverted = false;
     m_sort_mode = mode;
     m_task = SORT;
     m_input_tracks = tracks;
@@ -173,7 +173,7 @@ void PlayListTask::sortSelection(QList<PlayListTrack *> tracks, PlayListModel::S
     if(isRunning())
         return;
     clear();
-    m_reverted = !m_reverted;
+    m_reverted = false;
     m_sort_mode = mode;
     m_task = SORT_SELECTION;
     m_tracks = tracks;
