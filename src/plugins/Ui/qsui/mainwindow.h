@@ -93,6 +93,7 @@ private slots:
     void restoreWindowTitle();
     void onListChanged(int flags);
     void onCurrentPlayListChanged(PlayListModel *current, PlayListModel *previous);
+    void openFileLocation();
 
 private:
     void closeEvent(QCloseEvent *) override;

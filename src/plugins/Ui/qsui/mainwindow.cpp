@@ -212,7 +212,7 @@ void MainWindow::showState(Qmmp::State state)
         ACTION(ActionManager::PLAY_PAUSE)->setIcon(QIcon::fromTheme("media-playback-start"));
     }
 
-    switch((int) state)
+    switch(state)
     {
     case Qmmp::Playing:
     {
@@ -229,8 +229,6 @@ void MainWindow::showState(Qmmp::State state)
         m_analyzer->clearCover();
         qobject_cast<CoverWidget *>(m_ui.coverDockWidget->widget())->clearCover();
         break;
-    default:
-        ;
     }
 }
 
@@ -618,6 +616,7 @@ void MainWindow::createActions()
     m_ui.menuHelp->addAction(SET_ACTION(ActionManager::ABOUT_QT, qApp, SLOT(aboutQt())));
     //playlist menu
     m_pl_menu->addAction(SET_ACTION(ActionManager::PL_SHOW_INFO, m_pl_manager, SLOT(showDetails())));
+    m_pl_menu->addAction(SET_ACTION(ActionManager::PL_FILE_LOCATION, this, SLOT(openFileLocation())));
     m_pl_menu->addSeparator();
     m_pl_menu->addAction(ACTION(ActionManager::PL_REMOVE_SELECTED));
     m_pl_menu->addAction(ACTION(ActionManager::PL_REMOVE_ALL));
@@ -913,4 +912,10 @@ void MainWindow::onCurrentPlayListChanged(PlayListModel *current, PlayListModel 
     connect(current, SIGNAL(listChanged(int)), SLOT(onListChanged(int)));
     if(previous)
         disconnect(current, SIGNAL(listChanged(int)), this, SLOT(onListChanged(int)));
+}
+
+void MainWindow::openFileLocation()
+{
+    PlayListModel *model = m_listWidget->model();
+    UiHelper::instance()->openFileLocation(model->track(m_listWidget->anchorIndex()));
 }

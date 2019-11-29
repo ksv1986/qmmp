@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QDesktopServices>
 #include <qmmp/soundcore.h>
 #include <qmmp/metadatamanager.h>
 #include "filedialog.h"
@@ -255,6 +256,35 @@ void UiHelper::jumpToTrack(QWidget *parent, PlayListModel *model)
         m_jumpDialog->refresh();
     }
     m_jumpDialog->raise();
+}
+
+static QString getDirPath(const TrackInfo *info)
+{
+    if (!info)
+        return QString();
+
+    const QString& url = info->path();
+    if (!url.contains("://")) //local file
+        return QFileInfo(url).absolutePath();
+
+    if (url.contains(":///")) //pseudo-protocol
+    {
+        QString path = QUrl(url).path();
+        path.replace(QString(QUrl::toPercentEncoding("#")), "#");
+        path.replace(QString(QUrl::toPercentEncoding("?")), "?");
+        path.replace(QString(QUrl::toPercentEncoding("%")), "%");
+        return QFileInfo(path).absolutePath();
+    }
+    return QString();
+}
+
+void UiHelper::openFileLocation(const TrackInfo *info) const
+{
+    QString dir_path = getDirPath(info);
+    if (dir_path.isEmpty())
+        return;
+
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dir_path));
 }
 
 void UiHelper::about(QWidget *parent)

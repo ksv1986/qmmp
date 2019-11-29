@@ -94,6 +94,7 @@ ActionManager::ActionManager(QObject *parent) :
         { PL_SELECT_PREVIOUS, createAction(tr("&Select Previous Playlist"), "prev_pl", tr("Ctrl+PgUp"), "go-previous") },
         { PL_GROUP_TRACKS, createAction2(tr("&Group Tracks"), "group_tracks", tr("Ctrl+G")) },
         { PL_SHOW_HEADER, createAction2(tr("&Show Column Headers"), "show_header", tr("Ctrl+H")) },
+        { PL_FILE_LOCATION, createAction(QApplication::translate("DetailsDialog", "Open the directory containing this file", nullptr), "file_location", "") },
         //other
         { EQUALIZER, createAction(tr("&Equalizer"), "equalizer", tr("Ctrl+E")) },
         { SETTINGS, createAction(tr("&Settings"), "show_settings", tr("Ctrl+P"), "configure") },
