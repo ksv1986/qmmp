@@ -102,6 +102,7 @@ ActionManager::ActionManager(QObject *parent) :
                                                  tr("Ctrl+PgUp"), "go-previous");
     m_actions[PL_GROUP_TRACKS] = createAction2(tr("&Group Tracks"), "group_tracks", tr("Ctrl+G"));
     m_actions[PL_SHOW_HEADER] = createAction2(tr("&Show Column Headers"), "show_header", tr("Ctrl+H"));
+    m_actions[PL_FILE_LOCATION] = createAction(QApplication::translate("DetailsDialog", "Open the directory containing this file", nullptr), "file_location", "");
     //other
     m_actions[EQUALIZER] = createAction(tr("&Equalizer"), "equalizer", tr("Ctrl+E"));
     m_actions[SETTINGS] = createAction(tr("&Settings"), "show_settings", tr("Ctrl+P"), "configure");

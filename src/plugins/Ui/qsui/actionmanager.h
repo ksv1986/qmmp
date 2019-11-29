@@ -99,6 +99,7 @@ public:
         PL_SELECT_PREVIOUS,
         PL_GROUP_TRACKS,
         PL_SHOW_HEADER,
+        PL_FILE_LOCATION,
 
         EQUALIZER,
         SETTINGS,

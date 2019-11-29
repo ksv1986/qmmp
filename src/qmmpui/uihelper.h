@@ -145,6 +145,8 @@ public:
      */
     void jumpToTrack(QWidget *parent = qApp->activeWindow(),
                      PlayListModel *model = PlayListManager::instance()->selectedPlayList());
+
+    void openFileLocation(const TrackInfo *info) const;
     /*!
      * Shows about dialog
      * @param parent Parent widget

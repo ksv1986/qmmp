@@ -17,7 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
-#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -33,6 +32,7 @@
 #include "tageditor_p.h"
 #include "covereditor_p.h"
 #include "detailsdialog.h"
+#include "uihelper.h"
 
 DetailsDialog::DetailsDialog(QList<PlayListTrack *> tracks, QWidget *parent)
         : QDialog(parent)
@@ -63,21 +63,7 @@ DetailsDialog::~DetailsDialog()
 
 void DetailsDialog:: on_directoryButton_clicked()
 {
-    QString dir_path;
-    if(!m_info.path().contains("://")) //local file
-        dir_path = QFileInfo(m_info.path()).absolutePath();
-    else if (m_info.path().contains(":///")) //pseudo-protocol
-    {
-        dir_path = QUrl(m_info.path()).path();
-        dir_path.replace(QString(QUrl::toPercentEncoding("#")), "#");
-        dir_path.replace(QString(QUrl::toPercentEncoding("?")), "?");
-        dir_path.replace(QString(QUrl::toPercentEncoding("%")), "%");
-        dir_path = QFileInfo(dir_path).absolutePath();
-    }
-    else
-        return;
-
-    QDesktopServices::openUrl(QUrl::fromLocalFile(dir_path));
+    UiHelper::instance()->openFileLocation(&m_info);
 }
 
 void DetailsDialog::on_buttonBox_clicked(QAbstractButton *button)
