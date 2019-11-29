@@ -51,10 +51,6 @@ public:
      */
     FileLoader(QObject *parent = nullptr);
     /*!
-     * Object destructor.
-     */
-    ~FileLoader();
-    /*!
      * Sets file/directory to load
      */
     void add(const QString &path);
@@ -90,6 +86,7 @@ private:
     bool checkRestrictFilters(const QFileInfo &info);
     bool checkExcludeFilters(const QFileInfo &info);
     void removeIgnoredTracks(QList<PlayListTrack *> *tracks, const QStringList &ignoredPaths);
+    void processQueue();
     struct LoaderTask
     {
         QString path;
