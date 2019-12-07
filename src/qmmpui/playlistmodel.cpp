@@ -200,6 +200,7 @@ void PlayListModel::insert(int index, QList<PlayListTrack *> tracks)
             flags |= CURRENT;
         }
         emit trackAdded(track);
+        ++index;
     }
     //update current index
     m_current = m_container->indexOf(m_current_track);
