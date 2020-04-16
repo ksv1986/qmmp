@@ -18,6 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 
+#include <QCollator>
 #include <QFileInfo>
 #include <QDateTime>
 #include <QTime>
@@ -46,15 +47,22 @@ struct GroupdField
 // First we'll implement bundle of static compare procedures
 // to sort items in different ways
 
+static int stringCompare(const QString &s1, const QString &s2)
+{
+    QCollator collator;
+    collator.setNumericMode(true);
+    return collator.compare (s1, s2);
+}
+
 //by string
 static bool _stringLessComparator(TrackField* s1, TrackField* s2)
 {
-    return QString::localeAwareCompare (s1->value, s2->value) < 0;
+    return stringCompare (s1->value, s2->value) < 0;
 }
 
 static bool _stringGreaterComparator(TrackField* s1, TrackField* s2)
 {
-    return QString::localeAwareCompare (s1->value, s2->value) > 0;
+    return stringCompare (s1->value, s2->value) > 0;
 }
 //by number
 static bool _numberLessComparator(TrackField* s1, TrackField* s2)
@@ -99,14 +107,14 @@ static bool _filenameLessComparator(TrackField* s1, TrackField* s2)
 {
     QFileInfo i_s1(s1->value);
     QFileInfo i_s2(s2->value);
-    return QString::localeAwareCompare (i_s1.baseName(), i_s2.baseName()) < 0;
+    return stringCompare (i_s1.baseName(), i_s2.baseName()) < 0;
 }
 
 static bool _filenameGreaterComparator(TrackField* s1, TrackField* s2)
 {
     QFileInfo i_s1(s1->value);
     QFileInfo i_s2(s2->value);
-    return QString::localeAwareCompare (i_s1.baseName(), i_s2.baseName()) > 0;
+    return stringCompare (i_s1.baseName(), i_s2.baseName()) > 0;
 }
 ////=============== THE END OF SORT IMPLEMENTATION =======================////
 
