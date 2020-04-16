@@ -137,6 +137,18 @@ PlayListTask::~PlayListTask()
     clear();
 }
 
+static QString getSortingPath(QString path, PlayListModel::SortMode mode)
+{
+    if (mode != PlayListModel::PATH_AND_FILENAME)
+        return path;
+
+    static const int max_scheme_len = 10;
+    const int prefix = path.left(max_scheme_len).indexOf("://");
+    return prefix < 0
+        ? path
+        : path.mid(prefix + 3);
+}
+
 void PlayListTask::sort(QList<PlayListTrack *> tracks, PlayListModel::SortMode mode)
 {
     if(isRunning())
@@ -157,7 +169,7 @@ void PlayListTask::sort(QList<PlayListTrack *> tracks, PlayListModel::SortMode m
         if(mode == PlayListModel::GROUP)
             f->value = t->groupName();
         else if(key == Qmmp::UNKNOWN)
-            f->value = t->path();
+            f->value = getSortingPath(t->path(), mode);
         else
             f->value = t->value(key);
         if(m_align_groups)
