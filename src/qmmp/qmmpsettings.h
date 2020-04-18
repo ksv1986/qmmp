@@ -111,6 +111,7 @@ public:
      * Returns \b true if cover file search is enabled; otherwise returns \b false.
      */
     bool useCoverFiles() const;
+    bool coverFollowsSelected() const;
     /*!
      * Sets cover search options.
      * @param inc Include cover name filters
@@ -119,8 +120,9 @@ public:
      * Recursive cover file search can be disabled by setting \b depth to \b 0.
      * @param use_files Use or not use files with covers.
      * This parameter doesn't take effect in embedded covers.
+     * @param follow_selected If true, cover is shown for selected track, current track otherwise.
      */
-    void setCoverSettings(QStringList inc, QStringList exc, int depth, bool use_files);
+    void setCoverSettings(QStringList inc, QStringList exc, int depth, bool use_files, bool follow_selected);
     /*!
      * Returns \b true if global proxy is enabled, otherwise returns \b false
      */
@@ -230,6 +232,7 @@ private:
     QStringList m_cover_exclude;
     int m_cover_depth;
     bool m_cover_use_files;
+    bool m_cover_follows_selected;
     //network settings
     bool m_proxy_enabled;
     bool m_proxy_auth;
