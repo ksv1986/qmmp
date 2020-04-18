@@ -23,8 +23,6 @@
 #include <QWidget>
 #include <QPixmap>
 
-class QMouseEvent;
-
 /**
    @internal
    @author Ilya Kotov <forkotov02@ya.ru>

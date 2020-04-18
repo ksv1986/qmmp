@@ -44,6 +44,7 @@ class QSUiTabWidget;
 class QSUiQuickSearch;
 class QSUiWaveformSeekBar;
 class QSUiStatusBar;
+class CoverWidget;
 
 
 /**
@@ -94,6 +95,7 @@ private slots:
     void onListChanged(int flags);
     void onCurrentPlayListChanged(PlayListModel *current, PlayListModel *previous);
     void openFileLocation();
+    void anchorChanged(int index);
 
 private:
     void closeEvent(QCloseEvent *) override;
@@ -101,6 +103,8 @@ private:
     void createWidgets();
     void createActions();
     void writeSettings();
+    CoverWidget* coverWidget() const;
+    void setCover(QString path);
     bool m_wasMaximized = false;
     PlayListManager *m_pl_manager;
     Ui::MainWindow m_ui;

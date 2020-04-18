@@ -428,7 +428,17 @@
            <string>Cover Image Retrieve</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0" colspan="2">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_follows">
+             <property name="text">
+              <string>Cover follows:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLineEdit" name="coverIncludeLineEdit"/>
+           </item>
+           <item row="0" column="0" colspan="3">
             <widget class="QCheckBox" name="useCoverFilesCheckBox">
              <property name="text">
               <string>Use separate image files</string>
@@ -445,9 +455,6 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="coverIncludeLineEdit"/>
-           </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
@@ -455,10 +462,10 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="2" column="2">
             <widget class="QLineEdit" name="coverExcludeLineEdit"/>
            </item>
-           <item row="3" column="0" colspan="2">
+           <item row="4" column="0" colspan="3">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
               <widget class="QLabel" name="label_13">
@@ -486,6 +493,33 @@
                 </size>
                </property>
               </spacer>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="1" colspan="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QRadioButton" name="coverFollowsSelected">
+               <property name="text">
+                <string>Selected track</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">coverRadioGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="coverFollowsCurrent">
+               <property name="text">
+                <string>Current track</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">coverRadioGroup</string>
+               </attribute>
+              </widget>
              </item>
             </layout>
            </item>
@@ -1058,4 +1092,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="coverRadioGroup"/>
+ </buttongroups>
 </ui>

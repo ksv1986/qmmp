@@ -151,6 +151,7 @@ void ConfigDialog::readSettings()
     m_ui->coverExcludeLineEdit->setText(gs->coverNameFilters(false).join(","));
     m_ui->coverDepthSpinBox->setValue(gs->coverSearchDepth());
     m_ui->useCoverFilesCheckBox->setChecked(gs->useCoverFiles());
+    m_ui->coverFollowsSelected->setChecked(gs->coverFollowsSelected());
     //replay gain
     m_ui->clippingCheckBox->setChecked(gs->replayGainPreventClipping());
     m_ui->replayGainModeComboBox->setCurrentIndex(m_ui->replayGainModeComboBox->findData(gs->replayGainMode()));
@@ -415,7 +416,8 @@ void ConfigDialog::saveSettings()
     gs->setCoverSettings(m_ui->coverIncludeLineEdit->text().split(","),
                          m_ui->coverExcludeLineEdit->text().split(","),
                          m_ui->coverDepthSpinBox->value(),
-                         m_ui->useCoverFilesCheckBox->isChecked());
+                         m_ui->useCoverFilesCheckBox->isChecked(),
+                         m_ui->coverFollowsSelected->isChecked());
     int i = m_ui->replayGainModeComboBox->currentIndex();
     gs->setReplayGainSettings((QmmpSettings::ReplayGainMode)
                               m_ui->replayGainModeComboBox->itemData(i).toInt(),

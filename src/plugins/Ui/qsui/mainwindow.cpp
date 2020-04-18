@@ -30,6 +30,7 @@
 #include <qmmp/decoder.h>
 #include <qmmp/metadatamanager.h>
 #include <qmmp/effect.h>
+#include <qmmp/qmmpsettings.h>
 #include <qmmpui/general.h>
 #include <qmmpui/playlistparser.h>
 #include <qmmpui/playlistformat.h>
@@ -154,6 +155,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     m_ui.fileSystemDockWidget->setWidget(new FileSystemBrowser(this));
     //cover
     m_ui.coverDockWidget->setWidget(new CoverWidget(this));
+    connect(m_listWidget, SIGNAL(anchorChanged(int)), SLOT(anchorChanged(int)));
     //playlists
     m_ui.playlistsDockWidget->setWidget(new PlayListBrowser(m_pl_manager, this));
 
@@ -205,6 +207,23 @@ void MainWindow::seek()
     m_core->seek(m_positionSlider->value()*1000);
 }
 
+CoverWidget* MainWindow::coverWidget() const
+{
+    return qobject_cast<CoverWidget *>(m_ui.coverDockWidget->widget());
+}
+
+namespace {
+    QPixmap getCover(QString path)
+    {
+        return MetaDataManager::instance()->getCover(path);
+    }
+}
+
+void MainWindow::setCover(QString path)
+{
+    coverWidget()->setCover(getCover(path));
+}
+
 void MainWindow::showState(Qmmp::State state)
 {
     if(state != Qmmp::Playing)
@@ -216,9 +235,9 @@ void MainWindow::showState(Qmmp::State state)
     {
     case Qmmp::Playing:
     {
-        m_analyzer->setCover(MetaDataManager::instance()->getCover(m_core->path()));
-        CoverWidget *cw = qobject_cast<CoverWidget *>(m_ui.coverDockWidget->widget());
-        cw->setCover(MetaDataManager::instance()->getCover(m_core->path()));
+        m_analyzer->setCover(getCover(m_core->path()));
+        if (!QmmpSettings::instance()->coverFollowsSelected())
+            setCover(m_core->path());
         ACTION(ActionManager::PLAY_PAUSE)->setIcon(QIcon::fromTheme("media-playback-pause"));
         break;
     }
@@ -227,7 +246,8 @@ void MainWindow::showState(Qmmp::State state)
     case Qmmp::Stopped:
         m_positionSlider->setValue(0);
         m_analyzer->clearCover();
-        qobject_cast<CoverWidget *>(m_ui.coverDockWidget->widget())->clearCover();
+        if (!QmmpSettings::instance()->coverFollowsSelected())
+            coverWidget()->clearCover();
         break;
     }
 }
@@ -918,4 +938,19 @@ void MainWindow::openFileLocation()
 {
     PlayListModel *model = m_listWidget->model();
     UiHelper::instance()->openFileLocation(model->track(m_listWidget->anchorIndex()));
+}
+
+void MainWindow::anchorChanged(int index)
+{
+    if (!QmmpSettings::instance()->coverFollowsSelected())
+        return;
+
+    if (m_listWidget->anchorIndex() < 0) {
+        setCover(m_core->path());
+        return;
+    }
+
+    PlayListModel *model = m_listWidget->model();
+    PlayListTrack *track = model->track(m_listWidget->anchorIndex());
+    setCover(track->path());
 }

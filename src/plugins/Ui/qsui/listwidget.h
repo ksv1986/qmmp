@@ -80,6 +80,7 @@ public slots:
 signals:
     void doubleClicked();
     void positionChanged(int, int); //current position, maximum value
+    void anchorChanged(int);
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -119,6 +120,7 @@ private:
     bool updateRowCount();
     void restoreFirstVisible();
     void updateScrollBars();
+    void moveAnchorTo(int index);
 
     bool m_update;
     int m_pressed_index;

@@ -135,9 +135,15 @@ int ListWidget::anchorIndex() const
     return m_anchor_index;
 }
 
-void ListWidget::setAnchorIndex(int index)
+void ListWidget::moveAnchorTo(int index)
 {
     m_anchor_index = index;
+    emit anchorChanged(index);
+}
+
+void ListWidget::setAnchorIndex(int index)
+{
+    moveAnchorTo(index);
     updateList(PlayListModel::SELECTION);
 }
 
@@ -267,13 +273,13 @@ void ListWidget::mousePressEvent(QMouseEvent *e)
         {
             if(!m_model->isSelected(index))
             {
-                m_anchor_index = m_pressed_index;
+                moveAnchorTo(m_pressed_index);
                 m_model->clearSelection();
                 m_model->setSelected(index, true);
             }
             if(m_model->isGroup(index) && m_model->selectedTracks().isEmpty())
             {
-                m_anchor_index = m_pressed_index;
+                moveAnchorTo(m_pressed_index);
                 PlayListGroup *group = m_model->group(index);
                 m_model->setSelected(group->tracks());
             }
@@ -291,12 +297,12 @@ void ListWidget::mousePressEvent(QMouseEvent *e)
         if ((Qt::ShiftModifier & e->modifiers()))
         {
             int prev_anchor_index = m_anchor_index;
-            m_anchor_index = m_pressed_index;
+            moveAnchorTo(m_pressed_index);
             m_model->setSelected(m_pressed_index, prev_anchor_index, true);
         }
         else //ShiftModifier released
         {
-            m_anchor_index = m_pressed_index;
+            moveAnchorTo(m_pressed_index);
             if ((Qt::ControlModifier & e->modifiers()))
             {
                 m_model->setSelected(index, !m_model->isSelected(index));
@@ -809,7 +815,7 @@ void ListWidget::mouseMoveEvent(QMouseEvent *e)
 
         if (INVALID_INDEX != index)
         {
-            m_anchor_index = index;
+            moveAnchorTo(index);
             SimpleSelection sel = m_model->getSelection(m_pressed_index);
             if(sel.count() > 1 && m_scroll_direction == TOP)
             {
@@ -841,7 +847,7 @@ void ListWidget::mouseReleaseEvent(QMouseEvent *e)
     {
         m_model->clearSelection();
         m_model->setSelected(m_pressed_index,true);
-        m_anchor_index = m_pressed_index;
+        moveAnchorTo(m_pressed_index);
         m_select_on_release = false;
     }
     m_pressed_index = INVALID_INDEX;
