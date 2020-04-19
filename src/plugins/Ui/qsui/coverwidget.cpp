@@ -22,8 +22,25 @@
 #include <QPaintEvent>
 #include <QAction>
 #include <qmmp/qmmp.h>
+#include <qmmp/qmmpsettings.h>
 #include <qmmpui/filedialog.h>
 #include "coverwidget.h"
+
+namespace {
+    QPixmap defaultCover()
+    {
+        QmmpSettings *gs = QmmpSettings::instance();
+        switch (gs->defaultCover()) {
+        case QmmpSettings::DEFAULTCOVER_NONE:
+            return QPixmap();
+        case QmmpSettings::DEFAULTCOVER_CUSTOM:
+            return QPixmap(gs->customCoverPath());
+        case QmmpSettings::DEFAULTCOVER_BUILTIN:
+            break;
+        }
+        return QPixmap(":/qsui/ui_no_cover.png");
+    }
+}
 
 CoverWidget::CoverWidget(QWidget *parent)
         : QWidget(parent)
@@ -32,15 +49,12 @@ CoverWidget::CoverWidget(QWidget *parent)
     QAction *saveAsAction = new QAction(tr("&Save As..."), this);
     connect(saveAsAction, SIGNAL(triggered()), SLOT(saveAs()));
     addAction(saveAsAction);
-    m_pixmap = QPixmap(":/qsui/ui_no_cover.png");
+    m_pixmap = defaultCover();
 }
-
-CoverWidget::~CoverWidget()
-{}
 
 void CoverWidget::setCover(const QPixmap &pixmap)
 {
-    m_pixmap = pixmap.isNull() ? QPixmap(":/qsui/ui_no_cover.png") : pixmap;
+    m_pixmap = pixmap.isNull() ? defaultCover() : pixmap;
     update();
 }
 

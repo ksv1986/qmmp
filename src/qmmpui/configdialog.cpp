@@ -17,9 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
+#include <QDebug>
 #include <QDir>
 #include <QSettings>
 #include <QFontDialog>
+#include <QImageReader>
 #include <QTreeWidgetItem>
 #include <qmmp/decoder.h>
 #include <qmmp/output.h>
@@ -86,6 +88,7 @@ ConfigDialog::ConfigDialog (QWidget *parent) : QDialog (parent)
         m_ui->contentsWidget->item(m_ui->contentsWidget->count() - 1)->setIcon(QIcon(":associations.png"));
     }
 #endif
+    connect(m_ui->customCoverBrowse, SIGNAL(pressed()), SLOT(on_browseCustomCover_clicked()));
 }
 
 ConfigDialog::~ConfigDialog()
@@ -149,6 +152,19 @@ void ConfigDialog::readSettings()
     m_ui->coverDepthSpinBox->setValue(gs->coverSearchDepth());
     m_ui->useCoverFilesCheckBox->setChecked(gs->useCoverFiles());
     m_ui->coverFollowsSelected->setChecked(gs->coverFollowsSelected());
+    m_ui->customCoverPath->setText(gs->customCoverPath());
+
+    switch (gs->defaultCover()) {
+    case QmmpSettings::DEFAULTCOVER_NONE:
+        m_ui->coverEmpty->setChecked(true);
+        break;
+    case QmmpSettings::DEFAULTCOVER_CUSTOM:
+        m_ui->coverCustom->setChecked(true);
+        break;
+    case QmmpSettings::DEFAULTCOVER_BUILTIN:
+        m_ui->coverDefault->setChecked(true);
+        break;
+    }
     //replay gain
     m_ui->clippingCheckBox->setChecked(gs->replayGainPreventClipping());
     m_ui->replayGainModeComboBox->setCurrentIndex(m_ui->replayGainModeComboBox->findData(gs->replayGainMode()));
@@ -305,6 +321,36 @@ void ConfigDialog::on_informationButton_clicked()
         dynamic_cast<PluginItem *>(item)->showAbout(this);
 }
 
+namespace {
+    QString imageFilter() {
+        QList<QByteArray> formats = QImageReader::supportedImageFormats();
+        QString all = "All supported image formats(";
+        QString res;
+        const char *all_sep = "";
+        const char *sep = "";
+        foreach (QByteArray b, formats) {
+            const QString ext(b);
+            res += QString("%1%2(*.%3)").arg(sep).arg(ext.toUpper()).arg(ext);
+            sep = ";;";
+            all += QString("%1*.%2").arg(all_sep).arg(ext);
+            all_sep = " ";
+        }
+        return QString("%1)%2%3").arg(all).arg(sep).arg(res);
+    }
+}
+
+void ConfigDialog::on_browseCustomCover_clicked()
+{
+    QString path = FileDialog::getOpenFileName(this, tr("Select custom cover image file"), QString(), imageFilter());
+    if (path.isEmpty())
+        return;
+    if (QPixmap(path).isNull()) {
+        qDebug() << "Unsupported image '" << path << "'\n";
+        return;
+    }
+    m_ui->customCoverPath->setText(path);
+}
+
 void ConfigDialog::createMenus()
 {
     MetaDataFormatterMenu *groupMenu = new MetaDataFormatterMenu(MetaDataFormatterMenu::GROUP_MENU, this);
@@ -406,11 +452,18 @@ void ConfigDialog::saveSettings()
                            m_ui->authProxyCheckBox->isChecked(),
                            proxyUrl);
 
+    QmmpSettings::DefaultCoverMode default_cover = QmmpSettings::DEFAULTCOVER_BUILTIN;
+    if (m_ui->coverEmpty->isChecked())
+        default_cover = QmmpSettings::DEFAULTCOVER_NONE;
+    if (m_ui->coverCustom->isChecked())
+        default_cover = QmmpSettings::DEFAULTCOVER_CUSTOM;
     gs->setCoverSettings(m_ui->coverIncludeLineEdit->text().split(","),
                          m_ui->coverExcludeLineEdit->text().split(","),
                          m_ui->coverDepthSpinBox->value(),
                          m_ui->useCoverFilesCheckBox->isChecked(),
-                         m_ui->coverFollowsSelected->isChecked());
+                         m_ui->coverFollowsSelected->isChecked(),
+                         default_cover,
+                         m_ui->customCoverPath->text());
     int i = m_ui->replayGainModeComboBox->currentIndex();
     gs->setReplayGainSettings((QmmpSettings::ReplayGainMode)
                               m_ui->replayGainModeComboBox->itemData(i).toInt(),

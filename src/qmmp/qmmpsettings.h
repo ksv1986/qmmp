@@ -112,6 +112,17 @@ public:
      */
     bool useCoverFiles() const;
     bool coverFollowsSelected() const;
+
+    enum DefaultCoverMode {
+        DEFAULTCOVER_NONE,
+        DEFAULTCOVER_BUILTIN,
+        DEFAULTCOVER_CUSTOM,
+    };
+    Q_ENUM(DefaultCoverMode);
+
+    DefaultCoverMode defaultCover() const;
+    QString customCoverPath() const;
+
     /*!
      * Sets cover search options.
      * @param inc Include cover name filters
@@ -121,8 +132,10 @@ public:
      * @param use_files Use or not use files with covers.
      * This parameter doesn't take effect in embedded covers.
      * @param follow_selected If true, cover is shown for selected track, current track otherwise.
+     * @param default_cover What image to show if track has no associated cover.
+     * @param custom_cover If @default_cover is DEFAULTCOVER_CUSTOM, path to custom image file.
      */
-    void setCoverSettings(QStringList inc, QStringList exc, int depth, bool use_files, bool follow_selected);
+    void setCoverSettings(QStringList inc, QStringList exc, int depth, bool use_files, bool follow_selected, DefaultCoverMode default_cover, QString custom_cover = QString());
     /*!
      * Returns \b true if global proxy is enabled, otherwise returns \b false
      */
@@ -233,6 +246,8 @@ private:
     int m_cover_depth;
     bool m_cover_use_files;
     bool m_cover_follows_selected;
+    DefaultCoverMode m_cover_default;
+    QString m_cover_custom;
     //network settings
     bool m_proxy_enabled;
     bool m_proxy_auth;

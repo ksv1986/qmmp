@@ -63,6 +63,7 @@ private slots:
     void on_contentsWidget_currentItemChanged (QListWidgetItem *current, QListWidgetItem *previous);
     void on_preferencesButton_clicked();
     void on_informationButton_clicked();
+    void on_browseCustomCover_clicked();
     void addGroupString(const QString &str);
     void saveSettings();
     void on_treeWidget_itemChanged (QTreeWidgetItem *item, int column);
