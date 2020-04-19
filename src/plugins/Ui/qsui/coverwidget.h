@@ -34,8 +34,6 @@ Q_OBJECT
 public:
     CoverWidget(QWidget *parent = nullptr);
 
-    ~CoverWidget();
-
     void setCover(const QPixmap&);
     void clearCover();
 

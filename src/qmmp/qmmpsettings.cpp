@@ -53,6 +53,8 @@ QmmpSettings::QmmpSettings(QObject *parent) : QObject(parent)
     m_cover_depth = settings.value("depth", 0).toInt();
     m_cover_use_files = settings.value("use_files", true).toBool();
     m_cover_follows_selected = settings.value("follow_selected", false).toBool();
+    m_cover_default = settings.value("default_cover", QmmpSettings::DEFAULTCOVER_BUILTIN).value<QmmpSettings::DefaultCoverMode>();
+    m_cover_custom = settings.value("custom_cover", QString()).toString();
     settings.endGroup();
     //network settings
     m_proxy_enabled = settings.value("Proxy/use_proxy", false).toBool();
@@ -150,13 +152,26 @@ bool QmmpSettings::coverFollowsSelected() const
     return m_cover_follows_selected;
 }
 
-void QmmpSettings::setCoverSettings(QStringList inc, QStringList exc, int depth, bool use_files, bool follow_selected)
+QmmpSettings::DefaultCoverMode QmmpSettings::defaultCover() const
+{
+    return m_cover_default;
+}
+
+QString QmmpSettings::customCoverPath() const
+{
+    return m_cover_custom;
+}
+
+void QmmpSettings::setCoverSettings(QStringList inc, QStringList exc, int depth, bool use_files, bool follow_selected,
+    DefaultCoverMode default_cover, QString custom_cover)
 {
     m_cover_inc = inc;
     m_cover_exclude = exc;
     m_cover_depth = depth;
     m_cover_use_files = use_files;
     m_cover_follows_selected = follow_selected;
+    m_cover_default = default_cover;
+    m_cover_custom = custom_cover;
     MetaDataManager::instance()->clearCoverCache();
     m_timer->start();
     emit coverSettingsChanged();
@@ -274,6 +289,8 @@ void QmmpSettings::sync()
     settings.setValue("depth", m_cover_depth);
     settings.setValue("use_files", m_cover_use_files);
     settings.setValue("follow_selected", m_cover_follows_selected);
+    settings.setValue("default_cover", m_cover_default);
+    settings.setValue("custom_cover", m_cover_custom);
     settings.endGroup();
     //network settings
     settings.setValue("Proxy/use_proxy", m_proxy_enabled);

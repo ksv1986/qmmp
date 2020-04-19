@@ -428,10 +428,51 @@
            <string>Cover Image Retrieve</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
+           <item row="3" column="1" colspan="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QRadioButton" name="coverFollowsSelected">
+               <property name="text">
+                <string>Selected track</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">coverRadioGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="coverFollowsCurrent">
+               <property name="text">
+                <string>Current track</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">coverRadioGroup</string>
+               </attribute>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Include files:</string>
+             </property>
+            </widget>
+           </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_follows">
              <property name="text">
               <string>Cover follows:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_12">
+             <property name="text">
+              <string>Exclude files:</string>
              </property>
             </widget>
            </item>
@@ -448,24 +489,54 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_11">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_no_cover">
              <property name="text">
-              <string>Include files:</string>
+              <string>No cover:</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_12">
-             <property name="text">
-              <string>Exclude files:</string>
-             </property>
-            </widget>
+           <item row="4" column="1" colspan="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QRadioButton" name="coverEmpty">
+               <property name="text">
+                <string extracomment="No image is displayed if track has np associated cover">Empty</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">noCoverRadioGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="coverDefault">
+               <property name="text">
+                <string extracomment="Built-in image is displayed if track has no assiciated cover">Default</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">noCoverRadioGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="coverCustom">
+               <property name="text">
+                <string extracomment="Custom image is displayed if track has no associated cover">Custom</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">noCoverRadioGroup</string>
+               </attribute>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item row="2" column="2">
             <widget class="QLineEdit" name="coverExcludeLineEdit"/>
            </item>
-           <item row="4" column="0" colspan="3">
+           <item row="6" column="0" colspan="3">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
               <widget class="QLabel" name="label_13">
@@ -496,32 +567,22 @@
              </item>
             </layout>
            </item>
-           <item row="3" column="1" colspan="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QRadioButton" name="coverFollowsSelected">
-               <property name="text">
-                <string>Selected track</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">coverRadioGroup</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="coverFollowsCurrent">
-               <property name="text">
-                <string>Current track</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">coverRadioGroup</string>
-               </attribute>
-              </widget>
-             </item>
-            </layout>
+           <item row="5" column="0">
+            <widget class="QPushButton" name="customCoverBrowse">
+             <property name="text">
+              <string extracomment="Choose file for custom cover image">Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" colspan="2">
+            <widget class="QLineEdit" name="customCoverPath">
+             <property name="inputMask">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>Path to custom cover image</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -1094,5 +1155,6 @@
  </connections>
  <buttongroups>
   <buttongroup name="coverRadioGroup"/>
+  <buttongroup name="noCoverRadioGroup"/>
  </buttongroups>
 </ui>
