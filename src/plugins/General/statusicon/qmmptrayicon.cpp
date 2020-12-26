@@ -23,6 +23,7 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
 #include <QWindow>
+#include <QTextDocumentFragment>
 #include <qmmp/soundcore.h>
 
 #include "qmmptrayicon.h"
@@ -50,7 +51,10 @@ void QmmpTrayIcon::setToolTip(const QString &tip)
             showToolTip();
     }
     else
-        QSystemTrayIcon::setToolTip(tip);
+    {
+        QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(tip);
+        QSystemTrayIcon::setToolTip(fragment.toPlainText());
+    }
 #else
     QSystemTrayIcon::setToolTip(tip);
 #endif
