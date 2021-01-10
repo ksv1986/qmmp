@@ -135,17 +135,6 @@
     <invalidIndicator value="Click to search for the Lyrics on Lyrics.com"/>
     <invalidIndicator value="we do not have the lyric for this song"/>
   </provider>
-  <provider name="lyrics.wikia.com" title="{artist}:{title} Lyrics - " charset="utf-8" url="https://lyrics.wikia.com/{Artist}:{Title}">
-    <urlFormat replace=" _@;\&quot;" with="_"/>
-    <urlFormat replace="?" with="%3F"/>
-    <extract>
-      <item begin="&lt;div class='lyricbox'&gt;" end="&lt;div class='lyricsbreak'"/>
-    </extract>
-    <exclude>
-      <item tag="&lt;div class='rtMatcher'&gt;"/>
-      <item tag="&lt;span style=&quot;padding:1em&quot;&gt;"/>
-    </exclude>
-  </provider>
   <provider name="lyricsbay.com" title="{title} lyrics {artist}" charset="iso-8859-1" url="http://www.lyricsbay.com/{title}_lyrics-{artist}.html">
     <urlFormat replace=" _@,;&amp;\/'&quot;" with="_"/>
     <urlFormat replace="." with=""/>
