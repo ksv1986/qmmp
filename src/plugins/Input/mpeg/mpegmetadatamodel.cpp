@@ -403,7 +403,11 @@ void MpegFileTagModel::remove()
 void MpegFileTagModel::save()
 {
     if(m_tag)
+#if ((TAGLIB_MAJOR_VERSION == 1) && (TAGLIB_MINOR_VERSION <= 11))
         m_file->save(m_tagType, false);
+#else
+        m_file->save(m_tagType, TagLib::File::StripNone, TagLib::ID3v2::Version::v4, TagLib::File::DoNotDuplicate);
+#endif
     else
         m_file->strip(m_tagType);
 }

@@ -404,7 +404,11 @@ void RGScanDialog::on_writeButton_clicked()
             TagLib::MPEG::File file(qPrintable(item->url));
             writeAPETag(file.APETag(true), item);
             writeID3v2Tag(file.ID3v2Tag(true), item);
+#if ((TAGLIB_MAJOR_VERSION == 1) && (TAGLIB_MINOR_VERSION <= 11))
             file.save(TagLib::MPEG::File::APE | TagLib::MPEG::File::ID3v2, false);
+#else
+            file.save(TagLib::MPEG::File::APE | TagLib::MPEG::File::ID3v2, TagLib::File::StripNone);
+#endif
         }
         else if(ext == "flac") //flac
         {
